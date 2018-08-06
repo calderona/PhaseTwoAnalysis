@@ -28,6 +28,35 @@ scram b -j 8
 
 As the global tag contains Run-2 JEC, you might want to download an SQLite file to rerun JEC. See the [TWiki](https://twiki.cern.ch/twiki/bin/view/CMS/Phase2HGCRecipes) for more details.
 
+
+Producing ntuples from Delphes samples
+-----------------
+
+Go to the folder: 
+
+```cd  PhaseTwoAnalysis/delphesInterface/ntupler/```
+
+
+And here you will need to run env.sh ( with a new configuration), and later compile everything. 
+
+
+```source env.sh
+
+make -j  
+```
+
+DISCLAIMER: on this production we are taking the objects directly from our Delphes production, so I guess we do not need 
+to apply SF on top to each object. 
+
+
+Running the code on the same config file as before: 
+
+```./ntupler config/testSUSYsamples.txt```
+
+
+
+
+
 Producing flat ntuples (only recommended mode for the moment)
 -----------------
 

@@ -56,14 +56,16 @@ Running the code on the same config file as before:
 
 
 
-
-Producing flat ntuples (only recommended mode for the moment)
+Producing flat ntuples from PAT (only recommended mode for the moment)
 -----------------
 
+
 Flat ntuples can be produced in the `NTupler` folder, either from PAT or RECO events, by running interactively:
+
 ```bash
 cmsRun scripts/produceNtuples_cfg.py skim=False/True outFilename=MiniEvents.root inputFormat=RECO/PAT
 ```
+
 If you want to rerun JEC, you can use the `updateJEC` argument with the path to the SQLite file.
 
 The `skim` flag can be used to reduce the size of the output files. A histogram containing the number of events before the skim is then stored in the output files. By default, events are required to contain at least 1 lepton and 2 jets, but this can be easily modified ll.71-97 of `src/produceNtuples_cfg.py`.

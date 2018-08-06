@@ -15,14 +15,14 @@
 
 void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
-	d_ana::dBranchHandler<Electron> elecs(tree(),"Electron");
+	d_ana::dBranchHandler<Electron> elecs(tree(),"ElectronCHS");
 	d_ana::dBranchHandler<HepMCEvent>  event(tree(),"Event");
 	d_ana::dBranchHandler<GenParticle> genpart(tree(),"Particle");
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
       d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
 	d_ana::dBranchHandler<Muon>        muontight(tree(),"MuonTight");
-	d_ana::dBranchHandler<Photon>      photon(tree(),"Photon");
+	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
 	size_t nevents=tree()->entries();
 	if(isTestMode())
@@ -71,7 +71,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	metsf;
 
 	TString basepath=getenv("CMSSW_BASE");
-	basepath+="/src/PhaseTwoAnalysis/delphesInterface/ntupler/data/";
+	basepath="/afs/cern.ch/work/c/calderon/private/DAnalysis/CMSSW_9_3_5/src/PhaseTwoAnalysis/delphesInterface/ntupler/data/";
 
 	tightelecsf.loadTH2D  (basepath+"ElectronTight_PTabsEta.root","FullSimOverDelphes");
 	medelecsf.loadTH2D    (basepath+"ElectronMedium_PTabsEta.root","FullSimOverDelphes");

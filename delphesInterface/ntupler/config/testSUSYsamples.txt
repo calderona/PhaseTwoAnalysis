@@ -1,0 +1,20 @@
+[config-begin]
+
+    Outputdir  = output
+    Outputfile = outputfile.root
+    Lumi       = 3000
+
+    Testmode   = true
+
+    Maxchilds  = 6
+
+    Samplesdir = file:/eos/user/c/calderon/delphes/
+
+[config-end]
+
+
+[inputfiles-begin]
+
+    DisplacedSUSY_stopToBottom_M_250_10mm_TuneCP5_14TeV_pythia8.root, D010mm, 632, 50, auto, 1 
+
+ [inputfiles-end]

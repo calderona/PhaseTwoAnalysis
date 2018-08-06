@@ -1,6 +1,0 @@
-libDAnalysis.so
-.project
-.cproject
-obj/*
-!obj/README
-.settings

@@ -8,6 +8,7 @@ CC_FLAGS += -I$(CMSSW_BASE)/src -I$(DELPHES_PATH) -I$(DANALYSISPATH) -I.
 #CC_FLAGS += -MMD
 
 
+
 all: $(patsubst bin/%.cpp, %, $(wildcard bin/*.cpp))
 
 %: bin/%.cpp Makefile $(OBJ_FILES)

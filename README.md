@@ -41,8 +41,9 @@ And here you will need to run env.sh ( with a new configuration), and later comp
 
 
 ```source env.sh
+```
 
-make -j  
+```make -j  
 ```
 
 DISCLAIMER: on this production we are taking the objects directly from our Delphes production, so I guess we do not need 
@@ -65,6 +66,7 @@ Flat ntuples can be produced in the `NTupler` folder, either from PAT or RECO ev
 ```bash
 cmsRun scripts/produceNtuples_cfg.py skim=False/True outFilename=MiniEvents.root inputFormat=RECO/PAT
 ```
+
 
 If you want to rerun JEC, you can use the `updateJEC` argument with the path to the SQLite file.
 

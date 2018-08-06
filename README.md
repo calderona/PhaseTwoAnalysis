@@ -22,7 +22,7 @@ git cms-init
 mkdir -p RecoEgamma && pushd RecoEgamma
 git clone https://github.com/nsmith-/Phase2InterimID.git
 popd
-git clone https://github.com/jkiesele/PhaseTwoAnalysis.git
+git clone https://github.com/calderona/PhaseTwoAnalysis.git
 scram b -j 8
 ```
 
@@ -40,11 +40,9 @@ Go to the folder:
 And here you will need to run env.sh ( with a new configuration), and later compile everything. 
 
 
-```source env.sh
-```
+```source env.sh```
 
-```make -j  
-```
+```make -j```  
 
 DISCLAIMER: on this production we are taking the objects directly from our Delphes production, so I guess we do not need 
 to apply SF on top to each object. 

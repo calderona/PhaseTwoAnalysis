@@ -20,7 +20,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	d_ana::dBranchHandler<GenParticle> genpart(tree(),"Particle");
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
-      d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
+        d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
 	d_ana::dBranchHandler<Muon>        muontight(tree(),"MuonTight");
 	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
@@ -52,40 +52,15 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	TTree * t_tightElecs_   = new TTree("ElectronTight","ElectronTight");
 	TTree * t_looseMuons_   = new TTree("MuonLoose","MuonLoose");
 	TTree * t_tightMuons_   = new TTree("MuonTight","MuonTight");
-      TTree * t_allTaus_   = new TTree("TauAll","TauAll");
+	TTree * t_allTaus_   = new TTree("TauAll","TauAll");
 	TTree * t_puppiJets_    = new TTree("JetPUPPI","JetPUPPI");
 	TTree * t_puppiMET_     = new TTree("PuppiMissingET","PuppiMissingET");
 	TTree * t_loosePhotons_ = new TTree("PhotonLoose","PhotonLoose");
 	TTree * t_tightPhotons_ = new TTree("PhotonTight","PhotonTight");
 	createMiniEventTree(t_event_, t_genParts_, t_vertices_, t_genJets_, t_genPhotons_, t_looseElecs_,
-			t_mediumElecs_,t_tightElecs_, t_looseMuons_, t_tightMuons_, t_allTaus_, t_puppiJets_, t_puppiMET_, t_loosePhotons_,
-			t_tightPhotons_, ev_);
+			t_mediumElecs_,t_tightElecs_, t_looseMuons_, t_tightMuons_, t_allTaus_, t_puppiJets_, t_puppiMET_, t_loosePhotons_,t_tightPhotons_, ev_);
 
 
-	//load effective corrections for delphes samples vs fullSim
-	scaleFactors
-	tightelecsf,medelecsf,looseelecsf,
-	tightmuonsf,loosemuonsf,
-	jetsf,
-	tightphotonsf,loosephotonsf,
-	metsf;
-
-	TString basepath=getenv("CMSSW_BASE");
-	basepath="/afs/cern.ch/work/c/calderon/private/DAnalysis/CMSSW_9_3_5/src/PhaseTwoAnalysis/delphesInterface/ntupler/data/";
-
-	tightelecsf.loadTH2D  (basepath+"ElectronTight_PTabsEta.root","FullSimOverDelphes");
-	medelecsf.loadTH2D    (basepath+"ElectronMedium_PTabsEta.root","FullSimOverDelphes");
-	//looseelecsf.loadTH2D  (cmsswbase+"bla.root","histo");
-    //
-	tightmuonsf.loadTH2D  (basepath+"MuonTight_PTabsEta.root","FullSimOverDelphes");
-	//loosemuonsf.loadTH2D  (cmsswbase+"bla.root","histo");
-    //
-	//jetsf.loadTH2D        (cmsswbase+"bla.root","histo");
-    //
-	tightphotonsf.loadTH2D(basepath+"PhotonTight_PTabsEta.root","FullSimOverDelphes");
-	//loosephotonsf.loadTH2D(cmsswbase+"bla.root","histo");
-    //
-	//metsf.loadTH2D        (cmsswbase+"bla.root","histo");
 
 	for(size_t eventno=0;eventno<nevents;eventno++){
 		/*
@@ -174,7 +149,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			ev_.tp_pt [ev_.ntp]=selectedphotons.at(i)->PT;
 			ev_.tp_phi[ev_.ntp]=selectedphotons.at(i)->Phi;
 			ev_.tp_nrj[ev_.ntp]=selectedphotons.at(i)->E;
-			ev_.tp_sf[ev_.ntp]=tightphotonsf.getSF(fabs(selectedphotons.at(i)->Eta),selectedphotons.at(i)->PT);
 			ev_.ntp++;
 		}
 
@@ -187,8 +161,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			ev_.tm_phi   [ev_.ntm]=selectedMuons.at(i)->Phi;
 			ev_.tm_mass  [ev_.ntm]=0.105;
 			ev_.tm_relIso[ev_.ntm]=selectedMuons.at(i)->IsolationVarRhoCorr; // /selectedMuons.at(i)->PT;
-			ev_.tm_sf[ev_.ntm]=tightmuonsf.getSF(fabs(selectedMuons.at(i)->Eta),selectedMuons.at(i)->PT);
-                  //ev_.tm_g     [ev_.ntm] =selectedMuons.at(i)->Particle.PID;
+			//ev_.tm_g     [ev_.ntm] =selectedMuons.at(i)->Particle.PID;
 			ev_.ntm++;
 		}
 
@@ -202,7 +175,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			ev_.me_phi   [ev_.nme]=selectedelectrons.at(i)->Phi;
 			ev_.me_mass  [ev_.nme]=0.00051;
 			ev_.me_relIso[ev_.nme]=selectedelectrons.at(i)->IsolationVarRhoCorr; //  /selectedelectrons.at(i)->PT ;
-			ev_.me_sf[ev_.nme]=medelecsf.getSF(fabs(selectedelectrons.at(i)->Eta),selectedelectrons.at(i)->PT);
 			ev_.nme++;
 
 			ev_.te_pt    [ev_.nte] =selectedelectrons.at(i)->PT;
@@ -210,7 +182,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			ev_.te_phi   [ev_.nte]=selectedelectrons.at(i)->Phi;
 			ev_.te_mass  [ev_.nte]=0.00051;
 			ev_.te_relIso[ev_.nte]=selectedelectrons.at(i)->IsolationVarRhoCorr; //  /selectedelectrons.at(i)->PT ;
-			ev_.te_sf[ev_.nte]=tightelecsf.getSF(fabs(selectedelectrons.at(i)->Eta),selectedelectrons.at(i)->PT);
 			ev_.nte++;
 
 
@@ -226,7 +197,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
                   ev_.tau_ch[ev_.ntau]=selectedtaujets.at(i)->Charge;
                   ev_.tau_dm[ev_.ntau]=selectedtaujets.at(i)->Flavor; // not defined
                   ev_.tau_chargedIso[ev_.ntau]=0; // not defined
-                  ev_.tau_sf[ev_.ntau]= 1; // jetsf.getSF(fabs(selectedtaujets.at(i)->Eta),selectedtaujets.at(i)->PT);
                   ev_.ntau++;
             }
 
@@ -246,7 +216,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 				ev_.j_deepcsv[ev_.nj]=0b00000111;
 				ev_.j_mvav2[ev_.nj]=0b00000111;
 			}
-			ev_.j_sf[ev_.nj]=jetsf.getSF(fabs(selectedjets.at(i)->Eta),selectedjets.at(i)->PT);
 			ev_.nj++;
 		}
 
@@ -256,7 +225,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			ev_.met_eta[ev_.nmet]=met.at(i)->Eta ;
 			ev_.met_pt [ev_.nmet]=met.at(i)->MET ;
 			ev_.met_phi[ev_.nmet]=met.at(i)->Phi ;
-			ev_.met_sf[ev_.nmet]=metsf.getSF(0,met.at(i)->MET);
 			ev_.nmet++;
 		}
 
@@ -272,7 +240,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 		t_tightElecs_->Fill();
 		t_looseMuons_->Fill();
 		t_tightMuons_->Fill();
-            t_allTaus_->Fill();
+		t_allTaus_->Fill();
 		t_puppiJets_->Fill();
 		t_puppiMET_->Fill();
 		t_loosePhotons_->Fill();
@@ -294,7 +262,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	t_tightElecs_   ->Write();
 	t_looseMuons_   ->Write();
 	t_tightMuons_   ->Write();
-      t_allTaus_      ->Write();
+	t_allTaus_      ->Write();
 	t_puppiJets_    ->Write();
 	t_puppiMET_     ->Write();
 	t_loosePhotons_ ->Write();

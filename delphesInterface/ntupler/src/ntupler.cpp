@@ -15,13 +15,13 @@
 
 void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
-	d_ana::dBranchHandler<Electron> elecs(tree(),"ElectronCHS");
+        d_ana::dBranchHandler<Electron> elecs(tree(),"Electron");
 	d_ana::dBranchHandler<HepMCEvent>  event(tree(),"Event");
 	d_ana::dBranchHandler<GenParticle> genpart(tree(),"Particle");
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
         d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
-	d_ana::dBranchHandler<Muon>        muontight(tree(),"MuonTight");
+	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLoose");
 	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
 	size_t nevents=tree()->entries();
@@ -57,8 +57,10 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	TTree * t_puppiMET_     = new TTree("PuppiMissingET","PuppiMissingET");
 	TTree * t_loosePhotons_ = new TTree("PhotonLoose","PhotonLoose");
 	TTree * t_tightPhotons_ = new TTree("PhotonTight","PhotonTight");
-	createMiniEventTree(t_event_, t_genParts_, t_vertices_, t_genJets_, t_genPhotons_, t_looseElecs_,
-			t_mediumElecs_,t_tightElecs_, t_looseMuons_, t_tightMuons_, t_allTaus_, t_puppiJets_, t_puppiMET_, t_loosePhotons_,t_tightPhotons_, ev_);
+
+	//createMiniEventTree(t_event_, t_genParts_, t_vertices_, t_genJets_, t_looseMuons_, t_puppiJets_, t_puppiMET_, ev_);
+
+	createMiniEventTree(t_event_, t_genParts_, t_vertices_, t_genJets_, t_genPhotons_, t_looseElecs_, t_mediumElecs_,t_tightElecs_, t_looseMuons_, t_tightMuons_, t_allTaus_, t_puppiJets_, t_puppiMET_, t_loosePhotons_,t_tightPhotons_, ev_);
 
 
 
@@ -75,26 +77,11 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 		h_event_weight->Fill(0.,(double)event.at(0)->Weight);
 
 
-
-		std::vector<Photon*>selectedphotons;
-		for(size_t i=0;i<photon.size();i++){
-			if(photon.at(i)->PT<10)continue;
-			if(photon.at(i)->IsolationVarRhoCorr / photon.at(i)->E > 0.25)
-				continue;
-			selectedphotons.push_back(photon.at(i));
+		std::vector<Muon*>selectedMuons;
+		for(size_t i=0;i<muonloose.size();i++){
+                  if(muonloose.at(i)->PT<5)continue;
+                  selectedMuons.push_back(muonloose.at(i));
 		}
-
-		std::vector<Electron*>selectedelectrons;
-		for(size_t i=0;i<elecs.size();i++){
-			if(elecs.at(i)->PT<10)continue;
-			selectedelectrons.push_back(elecs.at(i));
-		}
-
-            std::vector<Muon*>selectedMuons;
-            for(size_t i=0;i<muontight.size();i++){
-                  if(muontight.at(i)->PT<5)continue;
-                  selectedMuons.push_back(muontight.at(i));
-            }
 
 
 		std::vector<Jet*>selectedjets;
@@ -103,12 +90,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			selectedjets.push_back(jet.at(i));
 		}
 
-            std::vector<Jet*>selectedtaujets;
-            for(size_t i=0;i<taujet.size();i++){
-                  if(taujet.at(i)->PT<10)continue;
-                  if(taujet.at(i)->TauTag!=1) continue;
-                  selectedtaujets.push_back(taujet.at(i));
-            }
 
             
 		ev_.event = event.at(0)->Number;
@@ -123,7 +104,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
                   int pid= fabs(genpart.at(i)->PID);
 
-                  if( (pid>16  && pid < 21) ||  pid > 25 ) continue;
+                  if( pid != 13  || pid != -13  ) continue;
 
                   ev_.gl_pid[ev_.ngl]=genpart.at(i)->PID;
                   ev_.gl_ch[ev_.ngl]=genpart.at(i)->Charge;
@@ -142,17 +123,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
             std::cout<<std::endl;
 
-		ev_.ntp=0;
-		for(size_t i=0;i<selectedphotons.size();i++){
-			if(ev_.ntp>=MiniEvent_t::maxpart)break;
-			ev_.tp_eta[ev_.ntp]=selectedphotons.at(i)->Eta;
-			ev_.tp_pt [ev_.ntp]=selectedphotons.at(i)->PT;
-			ev_.tp_phi[ev_.ntp]=selectedphotons.at(i)->Phi;
-			ev_.tp_nrj[ev_.ntp]=selectedphotons.at(i)->E;
-			ev_.ntp++;
-		}
-
-
 		ev_.ntm=0;
 		for(size_t i=0;i<selectedMuons.size();i++){
 			if(ev_.ntm>=MiniEvent_t::maxpart)break;
@@ -164,41 +134,6 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 			//ev_.tm_g     [ev_.ntm] =selectedMuons.at(i)->Particle.PID;
 			ev_.ntm++;
 		}
-
-		ev_.nte=0;
-		ev_.nme=0;
-		for(size_t i=0;i<selectedelectrons.size();i++){
-			if(ev_.nme>=MiniEvent_t::maxpart)break;
-
-			ev_.me_pt    [ev_.nme] =selectedelectrons.at(i)->PT;
-			ev_.me_eta   [ev_.nme]=selectedelectrons.at(i)->Eta;
-			ev_.me_phi   [ev_.nme]=selectedelectrons.at(i)->Phi;
-			ev_.me_mass  [ev_.nme]=0.00051;
-			ev_.me_relIso[ev_.nme]=selectedelectrons.at(i)->IsolationVarRhoCorr; //  /selectedelectrons.at(i)->PT ;
-			ev_.nme++;
-
-			ev_.te_pt    [ev_.nte] =selectedelectrons.at(i)->PT;
-			ev_.te_eta   [ev_.nte]=selectedelectrons.at(i)->Eta;
-			ev_.te_phi   [ev_.nte]=selectedelectrons.at(i)->Phi;
-			ev_.te_mass  [ev_.nte]=0.00051;
-			ev_.te_relIso[ev_.nte]=selectedelectrons.at(i)->IsolationVarRhoCorr; //  /selectedelectrons.at(i)->PT ;
-			ev_.nte++;
-
-
-		}
-
-            ev_.ntau=0;
-            for(size_t i=0;i<selectedtaujets.size();i++){
-                  if(ev_.ntau>=MiniEvent_t::maxjets)break;
-                  ev_.tau_pt  [ev_.ntau] =selectedtaujets.at(i)->PT;
-                  ev_.tau_eta [ev_.ntau]=selectedtaujets.at(i)->Eta;
-                  ev_.tau_phi [ev_.ntau]=selectedtaujets.at(i)->Phi;
-                  ev_.tau_mass[ev_.ntau]=selectedtaujets.at(i)->Mass;
-                  ev_.tau_ch[ev_.ntau]=selectedtaujets.at(i)->Charge;
-                  ev_.tau_dm[ev_.ntau]=selectedtaujets.at(i)->Flavor; // not defined
-                  ev_.tau_chargedIso[ev_.ntau]=0; // not defined
-                  ev_.ntau++;
-            }
 
 		ev_.nj=0;
 		for(size_t i=0;i<selectedjets.size();i++){
@@ -232,19 +167,19 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
 		t_event_->Fill();
 		t_genParts_->Fill();
-		t_genPhotons_->Fill();
+		//t_genPhotons_->Fill();
 		t_vertices_->Fill();
 		t_genJets_->Fill();
-		t_looseElecs_->Fill();
-		t_mediumElecs_->Fill();
-		t_tightElecs_->Fill();
+		//t_looseElecs_->Fill();
+		//t_mediumElecs_->Fill();
+		//t_tightElecs_->Fill();
 		t_looseMuons_->Fill();
-		t_tightMuons_->Fill();
-		t_allTaus_->Fill();
+		//t_tightMuons_->Fill();
+		//t_allTaus_->Fill();
 		t_puppiJets_->Fill();
 		t_puppiMET_->Fill();
-		t_loosePhotons_->Fill();
-		t_tightPhotons_->Fill();
+		//t_loosePhotons_->Fill();
+		//t_tightPhotons_->Fill();
 
 	}
 
@@ -254,19 +189,19 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	ntupledir->cd();
 	t_event_        ->Write();
 	t_genParts_     ->Write();
-	t_genPhotons_   ->Write();
+	//t_genPhotons_   ->Write();
 	t_vertices_     ->Write();
 	t_genJets_      ->Write();
-	t_looseElecs_   ->Write();
-	t_mediumElecs_   ->Write();
-	t_tightElecs_   ->Write();
+	//t_looseElecs_   ->Write();
+	//t_mediumElecs_   ->Write();
+	//t_tightElecs_   ->Write();
 	t_looseMuons_   ->Write();
-	t_tightMuons_   ->Write();
-	t_allTaus_      ->Write();
+	//t_tightMuons_   ->Write();
+	//t_allTaus_      ->Write();
 	t_puppiJets_    ->Write();
 	t_puppiMET_     ->Write();
-	t_loosePhotons_ ->Write();
-	t_tightPhotons_ ->Write();
+	//t_loosePhotons_ ->Write();
+	//t_tightPhotons_ ->Write();
 
 	outfile->Close();
 	/*

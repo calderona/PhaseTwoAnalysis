@@ -21,7 +21,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
         d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
-	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLoose");
+	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLooseCHS");
 	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
 	size_t nevents=tree()->entries();

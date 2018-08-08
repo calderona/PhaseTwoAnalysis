@@ -22,7 +22,7 @@ git cms-init
 mkdir -p RecoEgamma && pushd RecoEgamma
 git clone https://github.com/nsmith-/Phase2InterimID.git
 popd
-git clone https://github.com/calderona/PhaseTwoAnalysis.git
+git clone -b YRupdate --single-branch https://github.com/calderona/PhaseTwoAnalysis.git 
 scram b -j 8
 ```
 

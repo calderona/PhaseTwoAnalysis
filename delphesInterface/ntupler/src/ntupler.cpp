@@ -8,7 +8,7 @@
 #include "interface/ntupler.h"
 #include "interface/scaleFactors.h"
 //dirty hack
-#include "../../../NTupler/src/MiniEvent.cc"
+#include "../../NTupler/src/MiniEvent.cc"
 #include "TDirectory.h"
 
 #include "TH1F.h"
@@ -21,7 +21,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
         d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
-	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLooseCHS");
+	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLoose");
 	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
 	size_t nevents=tree()->entries();
@@ -52,7 +52,7 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	TTree * t_tightElecs_   = new TTree("ElectronTight","ElectronTight");
 	TTree * t_looseMuons_   = new TTree("MuonLoose","MuonLoose");
 	TTree * t_tightMuons_   = new TTree("MuonTight","MuonTight");
-	TTree * t_allTaus_   = new TTree("TauAll","TauAll");
+	TTree * t_allTaus_      = new TTree("TauAll","TauAll");
 	TTree * t_puppiJets_    = new TTree("JetPUPPI","JetPUPPI");
 	TTree * t_puppiMET_     = new TTree("PuppiMissingET","PuppiMissingET");
 	TTree * t_loosePhotons_ = new TTree("PhotonLoose","PhotonLoose");
@@ -79,14 +79,18 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
 		std::vector<Muon*>selectedMuons;
 		for(size_t i=0;i<muonloose.size();i++){
-                  if(muonloose.at(i)->PT<5)continue;
-                  selectedMuons.push_back(muonloose.at(i));
+                 
+		  std::cout << "AQUIIIIIII ......   " << muonloose.at(i)->PT << std::endl;
+                  //if(muonloose.at(i)->PT<5)continue; 
+		  selectedMuons.push_back(muonloose.at(i));
 		}
 
+		//std::cout << "AQUIIIIIII ......   " << std::endl;   
 
 		std::vector<Jet*>selectedjets;
 		for(size_t i=0;i<jet.size();i++){
-			if(jet.at(i)->PT<10)continue;
+		  //std::cout << "AQUIIIIIII ......   " << std::endl;     		
+		  if(jet.at(i)->PT<10)continue;
 			selectedjets.push_back(jet.at(i));
 		}
 
@@ -123,16 +127,16 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 
             std::cout<<std::endl;
 
-		ev_.ntm=0;
+		ev_.nlm=0;
 		for(size_t i=0;i<selectedMuons.size();i++){
-			if(ev_.ntm>=MiniEvent_t::maxpart)break;
-			ev_.tm_pt    [ev_.ntm] =selectedMuons.at(i)->PT;
-			ev_.tm_eta   [ev_.ntm]=selectedMuons.at(i)->Eta;
-			ev_.tm_phi   [ev_.ntm]=selectedMuons.at(i)->Phi;
-			ev_.tm_mass  [ev_.ntm]=0.105;
-			ev_.tm_relIso[ev_.ntm]=selectedMuons.at(i)->IsolationVarRhoCorr; // /selectedMuons.at(i)->PT;
+			if(ev_.nlm>=MiniEvent_t::maxpart)break;
+			ev_.lm_pt    [ev_.nlm] =selectedMuons.at(i)->PT;
+			ev_.lm_eta   [ev_.nlm]=selectedMuons.at(i)->Eta;
+			ev_.lm_phi   [ev_.nlm]=selectedMuons.at(i)->Phi;
+			ev_.lm_mass  [ev_.nlm]=0.105;
+			ev_.lm_relIso[ev_.nlm]=selectedMuons.at(i)->IsolationVarRhoCorr; // /selectedMuons.at(i)->PT;
 			//ev_.tm_g     [ev_.ntm] =selectedMuons.at(i)->Particle.PID;
-			ev_.ntm++;
+			ev_.nlm++;
 		}
 
 		ev_.nj=0;

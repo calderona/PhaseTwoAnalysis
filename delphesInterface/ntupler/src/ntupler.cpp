@@ -21,9 +21,12 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 	d_ana::dBranchHandler<Jet>         genjet(tree(),"GenJet");
 	d_ana::dBranchHandler<Jet>         jet(tree(),"JetPUPPI");
         d_ana::dBranchHandler<Jet>         taujet(tree(),"Jet");
-	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLoose");
+	d_ana::dBranchHandler<Muon>        muonloose(tree(),"MuonLooseCHS");
 	d_ana::dBranchHandler<Photon>      photon(tree(),"PhotonLoose");
 	d_ana::dBranchHandler<MissingET>   met(tree(),"PuppiMissingET");
+
+	d_ana::dBranchHandler<Vertex>      vertex(tree(),"Vertex");     
+
 	size_t nevents=tree()->entries();
 	if(isTestMode())
 		nevents/=100;
@@ -77,10 +80,30 @@ void ntupler::analyze(size_t childid /* this info can be used for printouts */){
 		h_event_weight->Fill(0.,(double)event.at(0)->Weight);
 
 
+		std::vector<Vertex*>selectedVertices;                                                                                
+                ev_.nvtx=0;
+
+                for(size_t i=0;i<vertex.size();i++){
+                
+		  //selectedVertices.push_back(vertices.at(i));                                                                        
+                  if(ev_.nvtx>=MiniEvent_t::maxjets) break;
+		  
+		  selectedVertices.push_back(vertex.at(i));                   
+
+		  ev_.v_z[ev_.nvtx] = vertex.at(i)->Z;
+
+                  ev_.nvtx++;
+
+                  //std::cout << vertices.at(i)->Z << std::endl;                                                                       
+                }
+
+
+
+
 		std::vector<Muon*>selectedMuons;
 		for(size_t i=0;i<muonloose.size();i++){
                  
-		  std::cout << "AQUIIIIIII ......   " << muonloose.at(i)->PT << std::endl;
+		  std::cout << "AQUIIIIIII ......   " << muonloose.at(i)->D0 << std::endl;
                   //if(muonloose.at(i)->PT<5)continue; 
 		  selectedMuons.push_back(muonloose.at(i));
 		}

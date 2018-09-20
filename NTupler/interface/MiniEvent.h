@@ -49,7 +49,7 @@ struct MiniEvent_t
 
   //reco level event
   Int_t nvtx;
-  Float_t v_pt2[maxjets];
+  Float_t v_pt2[maxjets],v_z[maxjets];
   Int_t nle, nme, nte, nlm, ntm, nj, nmet, nlp, ntp, ntau;
   Int_t le_ch[maxpart], le_g[maxpart];
   Float_t le_pt[maxpart], le_eta[maxpart], le_phi[maxpart], le_mass[maxpart], le_relIso[maxpart],le_relTkIso[maxpart], le_bdt[maxpart], le_dz[maxpart], le_dxy[maxpart], le_sf[maxpart];

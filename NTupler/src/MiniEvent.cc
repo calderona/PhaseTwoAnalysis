@@ -47,6 +47,7 @@ void createMiniEventTree(TTree *t_event_, TTree *t_genParts_, TTree *t_vertices_
   //reco level event
   t_vertices_->Branch("Vertex_size",    &ev.nvtx,       "Vertex_size/I");
   t_vertices_->Branch("SumPT2",         &ev.v_pt2,      "SumPT2[Vertex_size]/F");
+  t_vertices_->Branch("Z",         &ev.v_z,      "Z[Vertex_size]/F");
 
   t_looseElecs_->Branch("ElectronLoose_size", &ev.nle,  "ElectronLoose_size/I");
   t_looseElecs_->Branch("Charge",       ev.le_ch,       "Charge[ElectronLoose_size]/I");
@@ -222,6 +223,8 @@ void attachToMiniEventTree(TTree *t_event_, TTree *t_genParts_, TTree *t_vertice
   //reco level event
   t_vertices_->SetBranchAddress("Vertex_size",    &ev.nvtx);
   t_vertices_->SetBranchAddress("SumPT2",         &ev.v_pt2);
+  t_vertices_->SetBranchAddress("Z",         &ev.v_z); 
+
 
   t_looseElecs_->SetBranchAddress("ElectronLoose_size", &ev.nle);
   t_looseElecs_->SetBranchAddress("Charge",       ev.le_ch);
